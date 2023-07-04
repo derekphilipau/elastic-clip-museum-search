@@ -15,6 +15,20 @@ es = Elasticsearch(
     api_key=api_key
 )
 
+es.indices.put_mapping(
+    index='collections',
+    body={
+        'properties': {
+            'image.embedding': {  # replace with the name you want to use for your vector field
+                'type': 'dense_vector',
+                'dims': 512,
+                'index': True,
+                'similarity': 'cosine'
+            }
+        }
+    }
+)
+
 # Open and load the embeddings JSON file
 with open('data/elasticsearch_embeddings.json', 'r') as f:
     data = json.load(f)
@@ -26,7 +40,7 @@ for item in data:
         id=item['id'],
         body={
             'doc': {
-                'image_embeddings': item['embedding']
+                'image.embedding': item['embedding']
             }
         }
     )
