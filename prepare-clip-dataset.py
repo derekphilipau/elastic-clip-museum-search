@@ -12,7 +12,7 @@ CLIP_SIZE = 224
 
 # Set your paths
 jsonl_file = 'data/collections.jsonl'
-out_csv = 'data/descriptions.csv'
+out_csv = 'data/image_data.csv'
 image_dir = 'data/images'
 
 # Set whether you want padding or not
@@ -56,27 +56,35 @@ def download_image(url, filename, padding):
 
 def get_primary_artist(artists):
     if not artists:
-        return ''
+        return None
     primary_artist = min(artists, key=lambda x: x['rank'])
-    return f"{primary_artist['role']}: {primary_artist['name']}. "
+    return {
+        "role": primary_artist['role'],
+        "name": primary_artist['name']
+    }
 
-def create_description(data):
+def write_description(writer, data):
     title = data.get('title', '')
-    date = data.get('object_date', '')
-    medium = data.get('medium', '')
+    primary_constituent = get_primary_artist(data.get('artists', []))
+    role = ''
+    constituent = ''
+    if primary_constituent:
+        if "role" in primary_constituent:
+            role = primary_constituent['role']
+        if "name" in primary_constituent:
+            constituent = primary_constituent['name']
     classification = data.get('classification', '')
     if classification == '(not assigned)':
         classification = ''
-    else:
-        classification = f"Classification: {classification}. "
-    primary_artist = get_primary_artist(data.get('artists', []))
-    description = f"Title: {title}. Date: {date}. {primary_artist}{classification}Medium: {medium}."
-    return description
+    medium = data.get('medium', '')
+    date = data.get('object_date', '')
+
+    writer.writerow([data['id'], title, role, constituent, classification, medium, date]) # write row to CSV
 
 def process_data(jsonl_file, out_csv, image_dir, padding):
     with jsonlines.open(jsonl_file) as reader, open(out_csv, 'w', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        writer.writerow(['id', 'description']) # write header
+        writer.writerow(['id', 'title', 'role', 'constituent', 'classification', 'medium', 'date']) # write header
         for obj in reader:
             id = obj['id']
             # download image
@@ -89,9 +97,7 @@ def process_data(jsonl_file, out_csv, image_dir, padding):
                         image_url = get_image_url(obj['primary_image'], 1)
                         download_result = download_image(image_url, f"{image_dir}/{id}.jpg", padding)
             if download_result:
-                # create description
-                description = create_description(obj)
-                writer.writerow([id, description]) # write row to CSV            
+                description = write_description(writer, obj)
 
 # Ensure output directories exist
 os.makedirs(image_dir, exist_ok=True)
