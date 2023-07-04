@@ -11,6 +11,12 @@ Three parts:
 - Modification of https://colab.research.google.com/github/openai/clip/blob/master/notebooks/Interacting_with_CLIP.ipynb
 - Elasticsearch integration: https://github.com/radoondas/flask-elastic-image-search
 
+## Notes
+
+I've tested various textual descriptions, including or removing various fields like medium, so far this is the best result.
+
+![Plot of cosine similarity](docs/img/cosine_similarity.png)
+
 ## Step 1: Install & Generate Dataset
 
 ```bash
