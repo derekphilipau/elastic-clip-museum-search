@@ -37,27 +37,14 @@ Run each step in the notebook.
 
 ## Step 3: Update Elasticsearch Index
 
-### Elasticsearch version
+Set up Elasticsearch connection:
 
-v8.6.0+
+- If cert required for connection, put in `secrets/http_ca.crt`
+- Export API key `export ELASTICSEARCH_API_KEY=UNS3aWxZYHABWkNOUzYwU2ZKaUg6dRlyY3JjQkVTX3lFWlU3RTdLUm5mQQ==`
 
-### Python environment
+Run: `python update_elasticsearch.py`
 
-**Python v3.9**
-
-Make sure, you can access and use Python.
-
-### 0. Setup Python env
-
-We must set up a Python environment to use scripts for image embeddings and the Flask app.
-
-```bash
-$ git clone https://github.com/radoondas/flask-elastic-image-search.git
-$ cd flask-elastic-image-search
-$ python3 -m venv .venv
-$ source .venv/bin/activate
-$ pip install -r requirements.txt
-```
+Embeddings will be stored in `collections` index, `imgage_embeddings` field.
 
 ### 1. Elasticsearch cluster
 
