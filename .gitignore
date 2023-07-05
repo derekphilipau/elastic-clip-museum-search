@@ -2,7 +2,7 @@
 .idea
 **/__pycache__/
 env/*
-data/images/*
+data/images*/*
 data/collections.jsonl
 data/elasticsearch_embeddings.json*
 .env

@@ -13,7 +13,8 @@ Three parts:
 
 ## Notes
 
-I've tested various textual descriptions, including or removing various fields like medium, so far this is the best result.
+- Image resizing & cropping: Tests of straight resizing to a square (stretching the image) vs padding with white border seem to show that padding worked better. White padding seems a little better than black padding.
+- Texts: I've tested various textual descriptions, including or removing various fields like medium, so far this is the best result.
 
 ![Plot of cosine similarity](docs/img/cosine_similarity.png)
 
