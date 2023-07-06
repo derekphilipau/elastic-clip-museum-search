@@ -4,6 +4,6 @@
 env/*
 data/images*/*
 data/collections.jsonl
-data/elasticsearch_embeddings.json*
+data/elasticsearch_embeddings*
 .env
 secrets/*

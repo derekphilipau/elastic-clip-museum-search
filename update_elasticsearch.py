@@ -15,34 +15,61 @@ es = Elasticsearch(
     api_key=api_key
 )
 
+# es.update_by_query(
+#     index='collections',
+#     body={
+#         "script": {
+#             "source": """
+#                 ctx._source.remove('image_embeddings');
+#                 ctx._source.remove('image.embedding');
+#             """,
+#             "lang": "painless"
+#         }
+#     }
+# )
+
 es.indices.put_mapping(
     index='collections',
     body={
         'properties': {
-            'image.embedding': {  # replace with the name you want to use for your vector field
-                'type': 'dense_vector',
-                'dims': 512,
-                'index': True,
-                'similarity': 'cosine'
+            'image': {  
+                'type': 'object',
+                'properties': {
+                    'embedding': {  
+                        'type': 'dense_vector',
+                        'dims': 512,
+                        'index': True,
+                        'similarity': 'cosine'
+                    }
+                }
             }
         }
     }
 )
 
-# Open and load the embeddings JSON file
-with open('data/elasticsearch_embeddings.json', 'r') as f:
-    data = json.load(f)
+i = 0
+while True:
+    try:
+        # Open and load the embeddings JSON file
+        with open(f'data/elasticsearch_embeddings_{i}.json', 'r') as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        break
 
-# For each embedding, update the corresponding document in the collections index
-for item in data:
-    es.update(
-        index='collections',
-        id=item['id'],
-        body={
-            'doc': {
-                'image.embedding': item['embedding']
+    # For each embedding, update the corresponding document in the collections index
+    for item in data:
+        es.update(
+            index='collections',
+            id=item['id'],
+            body={
+                'doc': {
+                    'image': {
+                        'embedding': item['embedding']
+                    }
+                }
             }
-        }
-    )
+        )
+
+    i += 1
 
 print('Update completed')
