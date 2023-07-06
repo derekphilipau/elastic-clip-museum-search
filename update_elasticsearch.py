@@ -15,19 +15,7 @@ es = Elasticsearch(
     api_key=api_key
 )
 
-# es.update_by_query(
-#     index='collections',
-#     body={
-#         "script": {
-#             "source": """
-#                 ctx._source.remove('image_embeddings');
-#                 ctx._source.remove('image.embedding');
-#             """,
-#             "lang": "painless"
-#         }
-#     }
-# )
-
+# create field if not exists
 es.indices.put_mapping(
     index='collections',
     body={
